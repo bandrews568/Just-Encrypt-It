@@ -1,2 +1,2 @@
 # Just-Encrypt-It
-Android written in Python using Kivy that encrypts text
+Android app written in Python using Kivy that encrypts text
