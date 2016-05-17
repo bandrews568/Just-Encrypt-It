@@ -1,3 +1,5 @@
+#: import TextInput kivy.uix.textinput.TextInput
+
 EncryptRoot:
 
 <EncryptRoot>:
@@ -7,50 +9,55 @@ EncryptRoot:
 	orientation: 'vertical'
 	decrypted_text: decrypt
 	encrypted_text: encrypt
-	encrypt_radio: encrypt_radio
-	decrypt_radio: decrypt_radio
 	BoxLayout:
-		orientation: 'horizontal'
-		CheckBox:
-			id: encrypt_radio
-			active: True
-			group: 'select'
-		Label:
-			text: 'Encrypt'
-		CheckBox:
-			id: decrypt_radio
-			group: 'select'
-		Label:
-			text: 'Decrypt'
-	BoxLayout:
-		height: '60dp'
+		height: '40dp'
 		size_hint_y: None
-		padding: 70, 0, 70, 0
-		pos_hint: {'center': 0.5, 'center': 0.5}
+		padding: 60, 0 
 		Label:
 			text: 'Select Key:'
+			halign: 'right'
+			#text_size: self.size
 		Spinner:
 			id: key
 			text: 'None'
 			values: [str(value) for value in range(1, 11)]
 	BoxLayout:
-		orientation: 'vertical'
-		Button:
-			text: 'Paste'
-		TextInput:
-			id: decrypt
-			text: ""
-			hint_text: "Enter text"
-			on_text: encrypt.text = root.encryptstring(self.text, key.text)
-			focus: True
-		BoxLayout:
-			orientation: 'horizontal'	
-			Button:
-				text: 'Copy'
-			Button:
-				text: 'Cut'
-		TextInput:
-			id: encrypt
-			text: ""
-			hint_text: "Encrypted text"
-			readonly: True
+		orientation: 'horizontal'
+		TabbedPanel:
+			do_default_tab: False
+			TabbedPanelItem:
+				text: 'Encrypt'
+				BoxLayout:
+					orientation: 'vertical'
+					BoxLayout:
+						padding: 7, 7
+						TextInput:
+							id: decrypt
+							text: ""
+							hint_text: "Enter text to be encrypted"
+							on_text: encrypt.text = root.encryptstring(self.text, key.text)
+					BoxLayout:
+						orientation: 'horizontal'
+						height: '50dp'
+						size_hint_y: None
+						padding: 2, 2
+						spacing: 10
+						Button:
+							text: "Copy"
+							on_press: TextInput().copy(encrypt.text)
+						Button:
+							text: "Share"
+					BoxLayout:
+						height: '130dp'
+						size_hint_y: None 
+						padding: 7, 7
+						TextInput:
+							id: encrypt
+							text: ""
+							hint_text: "Encrypted text"
+							read_only: True
+
+			TabbedPanelItem:
+				text: 'Decrypt'
+
+			
