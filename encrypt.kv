@@ -59,5 +59,35 @@ EncryptRoot:
 
 			TabbedPanelItem:
 				text: 'Decrypt'
+				BoxLayout:
+					orientation: 'vertical'
+					BoxLayout:
+						padding: 7, 7
+						TextInput:
+							id: decrypt_tab_encrypt
+							text: ""
+							hint_text: "Enter text to be decrypted"
+							on_text: decrypt_tab_decrypt.text = root.encryptstring(self.text, key.text)
+					BoxLayout:
+						orientation: 'horizontal'
+						height: '50dp'
+						size_hint_y: None
+						padding: 2, 2
+						spacing: 10
+						Button:
+							text: "Copy"
+							on_press: TextInput().copy(encrypt.text)
+						Button:
+							text: "Share"
+					BoxLayout:
+						height: '130dp'
+						size_hint_y: None 
+						padding: 7, 7
+						TextInput:
+							id: decrypt_tab_decrypt
+							text: ""
+							hint_text: "Decrypted text"
+							read_only: True
+
 
 			
