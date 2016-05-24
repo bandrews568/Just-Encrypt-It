@@ -1,4 +1,5 @@
 #: import TextInput kivy.uix.textinput.TextInput
+#: import Clipboard kivy.core.clipboard.Clipboard
 
 EncryptRoot:
 
@@ -7,8 +8,6 @@ EncryptRoot:
 
 <EncryptText>:
 	orientation: 'vertical'
-	decrypted_text: decrypt
-	encrypted_text: encrypt
 	BoxLayout:
 		height: '40dp'
 		size_hint_y: None
@@ -44,7 +43,13 @@ EncryptRoot:
 						spacing: 10
 						Button:
 							text: "Copy"
-							on_press: TextInput().copy(encrypt.text)
+							on_press: Clipboard.copy(encrypt.text)
+						Button:
+							text: "Paste"
+							on_press: decrypt.text = Clipboard.paste()
+						Button:
+							text: "Clear"
+							on_press: decrypt.text = ""; encrypt.text = ""
 						Button:
 							text: "Share"
 					BoxLayout:
@@ -64,10 +69,10 @@ EncryptRoot:
 					BoxLayout:
 						padding: 7, 7
 						TextInput:
-							id: decrypt_tab_encrypt
+							id: decrypt_main
 							text: ""
 							hint_text: "Enter text to be decrypted"
-							on_text: decrypt_tab_decrypt.text = root.encryptstring(self.text, key.text)
+							on_text: decrypt_text.text = root.decryptstring(self.text, key.text)
 					BoxLayout:
 						orientation: 'horizontal'
 						height: '50dp'
@@ -76,15 +81,22 @@ EncryptRoot:
 						spacing: 10
 						Button:
 							text: "Copy"
-							on_press: TextInput().copy(encrypt.text)
+							on_press: Clipboard.copy(decrypt_text.text)
+						Button:
+							text: "Paste"
+							on_press: decrypt_main.text = Clipboard.paste()
+						Button:
+							text: "Clear"
+							on_press: decrypt_main.text = ""; decrypt_text.text = ""
 						Button:
 							text: "Share"
+							on_press: app.root.share()
 					BoxLayout:
 						height: '130dp'
 						size_hint_y: None 
 						padding: 7, 7
 						TextInput:
-							id: decrypt_tab_decrypt
+							id: decrypt_text
 							text: ""
 							hint_text: "Decrypted text"
 							read_only: True
