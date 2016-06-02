@@ -1,4 +1,3 @@
-#: import TextInput kivy.uix.textinput.TextInput
 #: import Clipboard kivy.core.clipboard.Clipboard
 
 EncryptRoot:
@@ -11,15 +10,21 @@ EncryptRoot:
 	BoxLayout:
 		height: '40dp'
 		size_hint_y: None
-		padding: 60, 0 
 		Label:
-			text: 'Select Key:'
+			text: 'Select Encryption Type:'
 			halign: 'right'
-			#text_size: self.size
 		Spinner:
 			id: key
 			text: 'None'
-			values: [str(value) for value in range(1, 11)]
+			values: ['128 Bit', 'ROT 13']
+	BoxLayout:
+		height: '40dp'
+		size_hint_y: None
+		Label:
+			text: 'Password:'
+		TextInput:
+			id: password
+			hint_text: "Required for 128 Bit"
 	BoxLayout:
 		orientation: 'horizontal'
 		TabbedPanel:
@@ -34,12 +39,12 @@ EncryptRoot:
 							id: decrypt
 							text: ""
 							hint_text: "Enter text to be encrypted"
-							on_text: encrypt.text = root.encryptstring(self.text, key.text)
+							on_text: encrypt.text = root.encryptstring(self.text, key.text, pass_key=password.text)
 					BoxLayout:
 						orientation: 'horizontal'
 						height: '50dp'
 						size_hint_y: None
-						padding: 2, 2
+						padding: 1, 1
 						spacing: 10
 						Button:
 							text: "Copy"
@@ -52,6 +57,7 @@ EncryptRoot:
 							on_press: decrypt.text = ""; encrypt.text = ""
 						Button:
 							text: "Share"
+							on_press: root.share(encrypt.text)
 					BoxLayout:
 						height: '130dp'
 						size_hint_y: None 
@@ -59,7 +65,7 @@ EncryptRoot:
 						TextInput:
 							id: encrypt
 							text: ""
-							hint_text: "Encrypted text"
+							hint_text: "(Select Encryption Type)"
 							read_only: True
 
 			TabbedPanelItem:
@@ -72,12 +78,12 @@ EncryptRoot:
 							id: decrypt_main
 							text: ""
 							hint_text: "Enter text to be decrypted"
-							on_text: decrypt_text.text = root.decryptstring(self.text, key.text)
+							on_text: decrypt_text.text = root.decryptstring(self.text, key.text, pass_key=password.text)
 					BoxLayout:
 						orientation: 'horizontal'
 						height: '50dp'
 						size_hint_y: None
-						padding: 2, 2
+						padding: 1, 1
 						spacing: 10
 						Button:
 							text: "Copy"
@@ -90,7 +96,7 @@ EncryptRoot:
 							on_press: decrypt_main.text = ""; decrypt_text.text = ""
 						Button:
 							text: "Share"
-							on_press: app.root.share()
+							on_press: root.share(decrypt_text.text)
 					BoxLayout:
 						height: '130dp'
 						size_hint_y: None 
@@ -98,8 +104,5 @@ EncryptRoot:
 						TextInput:
 							id: decrypt_text
 							text: ""
-							hint_text: "Decrypted text"
+							hint_text: "(Select Encryption Type)"
 							read_only: True
-
-
-			
