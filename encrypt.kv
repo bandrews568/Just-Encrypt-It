@@ -24,7 +24,7 @@ EncryptRoot:
 			text: 'Password:'
 		TextInput:
 			id: password
-			hint_text: "Required for 128 Bit"
+			hint_text: "(Required for 128 Bit)"
 	BoxLayout:
 		orientation: 'horizontal'
 		TabbedPanel:
@@ -66,8 +66,9 @@ EncryptRoot:
 							id: encrypt
 							text: ""
 							hint_text: "(Select Encryption Type)"
-							read_only: True
-
+							readonly: True
+							use_bubble: False
+							use_handles: False
 			TabbedPanelItem:
 				text: 'Decrypt'
 				BoxLayout:
@@ -105,4 +106,6 @@ EncryptRoot:
 							id: decrypt_text
 							text: ""
 							hint_text: "(Select Encryption Type)"
-							read_only: True
+							readonly: True
+							use_bubble: False
+							use_handles: False
