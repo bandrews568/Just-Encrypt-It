@@ -1,4 +1,6 @@
-__version__ = '1.0'
+# -*- coding: utf-8 -*-
+
+__version__ = '0.2'
 
 import base64
 from codecs import encode, decode
@@ -16,67 +18,77 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel
 
-if platform == 'android':
-	from jnius import cast
-	from jnius import autoclass		
-
 class EncryptRoot(BoxLayout):
 	pass
 
+
 class EncryptText(BoxLayout):
 
-	password_popup = Popup(title = 'Password Max',
-						   title_align = 'center',
-						   content = Label(text = "Max length for a password\nis 16 characters."),
-						   size_hint=(.9, .4))
+	def __init__(self, *args, **kwargs):
+		super(EncryptText, self).__init__(*args, **kwargs)
+
+		self.password_max = Popup(title = 'Password Max',
+						   		  title_align = 'center',
+						   		  content = Label(text = \
+						   		  'Max length for a password\nis 16 characters.'),
+						   		  size_hint = (.9, .4))
+
+		self.no_password = Popup(title = 'Enter Password',
+								 title_align = 'center',
+								 content = Label(text = \
+								 'Password is required for 128 bit encryption.'),
+								 size_hint = (.9, .4))
 
 	def encryptstring(self, string, key, pass_key=None):
-		if key != 'None' and key == 'ROT 13':
-			encrypted_text = [encode(letter, 'rot13') for letter in string]
+		if key == 'ROT 13':
+			encrypted_text = [encode(letter, 'rot13') for letter in string if \
+							  ord(letter) in range(32, 127)]
 			encrypted_text = "".join(str(letter) for letter in encrypted_text)
 			return encrypted_text
 
-		elif key != 'None' and key == '128 Bit' and len(pass_key) > 0:
+		elif key == '128 Bit' and len(pass_key) > 0:
 			if len(pass_key) > 16:
-				self.password_popup.open()
+				self.password_max.open()
 			elif len(pass_key) < 16:
-				difference = 16 - len(pass_key)
-				pass_key = pass_key + ("x" * difference)
-			BLOCK_SIZE = 16
-			PADDING = '{'
-			pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+				#Add filler bits to password 
+				pass_key = pass_key + ("x" * (16 - len(pass_key)))
+			block_size = 16
+			padding = '{'
+			pad = lambda s: s + (block_size - len(s) % block_size) * padding
 			EncodeAES = lambda c, s: base64.b64encode(c.encrypt(pad(s)))	
 			cipher = AES.new(pass_key)
 			encoded = EncodeAES(cipher, string)
 			return encoded
 
 		elif key == '128 Bit':
-			return '(Password required for 128 bit encryption)'
+			#Remind user to enter a password
+			self.no_password.open()
 
 		else:
 			return '(Select Encryption Type)'
 		
 	def decryptstring(self, string, key, pass_key=None):
-		if key != 'None' and key == 'ROT 13':
-			decrypted_text = [decode(letter, 'rot13') for letter in string]
+		if key == 'ROT 13':
+			decrypted_text = [decode(letter, 'rot13') for letter in string if \
+							  ord(letter) in range(32, 127)]
 			decrypted_text= "".join(str(value) for value in decrypted_text)
 			return decrypted_text
 
-		elif key != 'None' and key == '128 Bit' and len(pass_key) > 0:
+		elif key == '128 Bit' and len(pass_key) > 0:
 			if len(pass_key) > 16:
-				self.password_popup.open()
+				self.password_max.open()
 			elif len(pass_key) < 16:
-				difference = 16 - len(pass_key)
-				pass_key = pass_key + ("x" * difference)
-			PADDING = '{'
-			DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
-			encryption = string
+				#Add filler bits to password
+				pass_key = pass_key + ("x" * (16 - len(pass_key)))
+			padding = '{'
+			DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(padding)
 			cipher = AES.new(pass_key)
-			decoded = DecodeAES(cipher, encryption)
+			decoded = DecodeAES(cipher, string)
 			return decoded 
 
 		elif key == '128 Bit':
-			return '(Password required for 128 bit encryption)'
+			#Remind user to enter a password
+			self.no_password.open()
 
 		else:
 			return '(Select Encryption Type)'
@@ -96,11 +108,20 @@ class EncryptText(BoxLayout):
 				currentActivity = cast('android.app.Activity', \
 					                   PythonActivity.mActivity)
 				currentActivity.startActivity(intent) 
-			else:
-				return
 
 class EncryptApp(App):
-	pass
 
-if __name__ == '__main__':
+	def tutorialpopup(self, data=None):
+		if data:
+			self.help_popup = Popup(title = 'Quick Guide',
+								text = "")
+			self.help_popup.open()
+	
+	def checkplatform(self):
+		if platform == 'android':
+			from jnius import cast
+			from jnius import autoclass	
+
+if __name__ == '__main__':	
+	EncryptApp().checkplatform()
 	EncryptApp().run()

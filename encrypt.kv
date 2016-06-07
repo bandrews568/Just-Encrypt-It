@@ -2,7 +2,7 @@
 
 EncryptRoot:
 
-<EncryptRoot>:
+<EncryptRoot>:	
 	EncryptText
 
 <EncryptText>:
@@ -25,6 +25,10 @@ EncryptRoot:
 		TextInput:
 			id: password
 			hint_text: "(Required for 128 Bit)"
+			disabled: False if key.text == '128 Bit' else True
+			use_bubble: False
+			use_handles: False
+			multiline: False
 	BoxLayout:
 		orientation: 'horizontal'
 		TabbedPanel:
