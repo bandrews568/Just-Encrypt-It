@@ -11,19 +11,23 @@ EncryptRoot:
 		height: '40dp'
 		size_hint_y: None
 		Label:
+			text_size: self.size
 			text: 'Select Encryption Type:'
 			halign: 'right'
 		Spinner:
 			id: key
 			text: 'None'
-			values: ['128 Bit', 'ROT 13']
+			values: ['128 Bit', 'ROT 13'] 
 	BoxLayout:
 		height: '40dp'
 		size_hint_y: None
 		Label:
+			text_size: self.size
+			halign: 'right'
 			text: 'Password:'
 		TextInput:
 			id: password
+			text: ""
 			hint_text: "(Required for 128 Bit)"
 			disabled: False if key.text == '128 Bit' else True
 			use_bubble: False
@@ -32,8 +36,10 @@ EncryptRoot:
 	BoxLayout:
 		orientation: 'horizontal'
 		TabbedPanel:
+			id: tabbed_panel
 			do_default_tab: False
 			TabbedPanelItem:
+				id: encrypt
 				text: 'Encrypt'
 				BoxLayout:
 					orientation: 'vertical'
@@ -43,7 +49,7 @@ EncryptRoot:
 							id: decrypt
 							text: ""
 							hint_text: "Enter text to be encrypted"
-							on_text: encrypt.text = root.encryptstring(self.text, key.text, pass_key=password.text)
+							on_text: if decrypt.text != "": encrypt.text = root.encryptstring(self.text, key.text, pass_key=password.text)
 					BoxLayout:
 						orientation: 'horizontal'
 						height: '50dp'
@@ -63,7 +69,7 @@ EncryptRoot:
 							text: "Share"
 							on_press: root.share(encrypt.text)
 					BoxLayout:
-						height: '130dp'
+						height: '200dp'
 						size_hint_y: None 
 						padding: 7, 7
 						TextInput:
@@ -113,3 +119,54 @@ EncryptRoot:
 							readonly: True
 							use_bubble: False
 							use_handles: False
+<NoPassPopup>:
+	id: no_pass
+	title: 'Enter Password'
+	title_align: 'center'
+	size_hint: 0.9, 0.6
+	auto_dismiss: False
+	BoxLayout:
+		orientation: 'vertical'
+		Label:
+			text_size: self.size
+			halign: 'center'
+			valign: 'top'
+			text: 'Password is required for 128 bit encryption'
+		Label:
+			markup: True
+			text_size: self.size
+			halign: 'center'
+			valign: 'middle'
+			text: "" if len(_password.text) <= 16 else "[color=ff3333]Max password length is 16 characters[/color]"
+		BoxLayout:
+			orientation: 'horizontal'
+			height: '40dp'
+			size_hint_y: None
+			Label:
+				text_size: self.size
+				halign: 'right'
+				text: 'Enter Password:'
+			TextInput:
+				id: _password
+				multiline: False
+				text: ""
+				focus: True
+		BoxLayout:
+			orientation: 'vertical'
+			padding: 0, 4, 0, 0
+			height: '40dp'
+			size_hint_y: None
+			Button:
+				text: 'Enter'
+				disabled: True if len(_password.text) == 0 or len(_password.text) > 16 else False
+				on_press: no_pass.dismiss()
+<MaxPassPopup>:
+	id: max_pass
+	title: 'Password Max'
+	title_align: 'center'
+	size_hint: 0.9, 0.4
+	Label:
+		text: 'Max length for a password is 16 characters.'
+		text_size: self.size
+		halign: 'center'
+		valign: 'center'
