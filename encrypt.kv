@@ -1,4 +1,5 @@
 #: import Clipboard kivy.core.clipboard.Clipboard
+#: import main main 
 
 EncryptRoot:
 
@@ -69,7 +70,7 @@ EncryptRoot:
 							text: "Share"
 							on_press: root.share(encrypt.text)
 					BoxLayout:
-						height: '200dp'
+						height: '130dp'
 						size_hint_y: None 
 						padding: 7, 7
 						TextInput:
@@ -89,7 +90,7 @@ EncryptRoot:
 							id: decrypt_main
 							text: ""
 							hint_text: "Enter text to be decrypted"
-							on_text: decrypt_text.text = root.decryptstring(self.text, key.text, pass_key=password.text)
+							on_text: if decrypt_main.text != "": decrypt_text.text = root.decryptstring(self.text, key.text, pass_key=password.text)
 					BoxLayout:
 						orientation: 'horizontal'
 						height: '50dp'
@@ -123,43 +124,9 @@ EncryptRoot:
 	id: no_pass
 	title: 'Enter Password'
 	title_align: 'center'
-	size_hint: 0.9, 0.6
-	auto_dismiss: False
-	BoxLayout:
-		orientation: 'vertical'
-		Label:
-			text_size: self.size
-			halign: 'center'
-			valign: 'top'
-			text: 'Password is required for 128 bit encryption'
-		Label:
-			markup: True
-			text_size: self.size
-			halign: 'center'
-			valign: 'middle'
-			text: "" if len(_password.text) <= 16 else "[color=ff3333]Max password length is 16 characters[/color]"
-		BoxLayout:
-			orientation: 'horizontal'
-			height: '40dp'
-			size_hint_y: None
-			Label:
-				text_size: self.size
-				halign: 'right'
-				text: 'Enter Password:'
-			TextInput:
-				id: _password
-				multiline: False
-				text: ""
-				focus: True
-		BoxLayout:
-			orientation: 'vertical'
-			padding: 0, 4, 0, 0
-			height: '40dp'
-			size_hint_y: None
-			Button:
-				text: 'Enter'
-				disabled: True if len(_password.text) == 0 or len(_password.text) > 16 else False
-				on_press: no_pass.dismiss()
+	size_hint: 0.9, 0.3
+	Label: 
+		text: "Password required for 128 bit"
 <MaxPassPopup>:
 	id: max_pass
 	title: 'Password Max'

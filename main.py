@@ -17,9 +17,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel
-from kivy.factory import Factory
-from kivy.clock import Clock
-from kivy.properties import ObjectProperty
 
 if platform == 'android':
 	from jnius import cast
@@ -28,10 +25,12 @@ if platform == 'android':
 class EncryptRoot(BoxLayout):
 	pass
 
-
 class EncryptText(BoxLayout):
 
+	Window.softinput_mode = "below_target"
+
 	def encryptstring(self, string, key, pass_key=None):
+		
 		if key == 'ROT 13':
 			encrypted_text = [encode(letter, 'rot13') for letter in string if \
 							  ord(letter) in range(32, 127)]
@@ -53,13 +52,14 @@ class EncryptText(BoxLayout):
 			encoded = EncodeAES(cipher, encode(string, 'utf-8'))
 			return encoded
 
-		elif key == '128 Bit':
+		elif key == '128 Bit' and not pass_key:
 			NoPassPopup().open()
 
 		else:
 			return '(Select Encryption Type)'
 		
 	def decryptstring(self, string, key, pass_key=None):
+		
 		if key == 'ROT 13':
 			decrypted_text = [decode(letter, 'rot13') for letter in string if \
 							  ord(letter) in range(32, 127)]
@@ -79,7 +79,7 @@ class EncryptText(BoxLayout):
 			decoded = DecodeAES(cipher, string)
 			return decoded
 
-		elif key == '128 Bit':
+		elif key == '128 Bit' and not pass_key:
 			#Remind user to enter a password
 			NoPassPopup().open()
 
@@ -109,7 +109,9 @@ class MaxPassPopup(Popup):
 	pass
 
 class EncryptApp(App):
-	pass
+	
+	def on_pause(self):
+		return True
 		
 if __name__ == '__main__':	
 	EncryptApp().run()
