@@ -1,5 +1,4 @@
 #: import Clipboard kivy.core.clipboard.Clipboard
-#: import main main 
 
 EncryptRoot:
 
@@ -62,7 +61,7 @@ EncryptRoot:
 							on_press: Clipboard.copy(encrypt.text)
 						Button:
 							text: "Paste"
-							on_press: decrypt.text = Clipboard.paste()
+							on_press: decrypt.text = root.paste_text()
 						Button:
 							text: "Clear"
 							on_press: decrypt.text = ""; encrypt.text = ""
@@ -102,7 +101,7 @@ EncryptRoot:
 							on_press: Clipboard.copy(decrypt_text.text)
 						Button:
 							text: "Paste"
-							on_press: decrypt_main.text = Clipboard.paste()
+							on_press: decrypt_main.text = root.paste_text()
 						Button:
 							text: "Clear"
 							on_press: decrypt_main.text = ""; decrypt_text.text = ""
@@ -127,13 +126,25 @@ EncryptRoot:
 	size_hint: 0.9, 0.3
 	Label: 
 		text: "Password required for 128 bit"
+
 <MaxPassPopup>:
 	id: max_pass
 	title: 'Password Max'
 	title_align: 'center'
-	size_hint: 0.9, 0.4
+	size_hint: 0.9, 0.3
 	Label:
 		text: 'Max length for a password is 16 characters.'
+		text_size: self.size
+		halign: 'center'
+		valign: 'center'
+
+<MaxClipboardPopup>:
+	id: max_clipboard
+	title: 'Paste Max'
+	title_align: 'center'
+	size_hint: 0.9, 0.3
+	Label:
+		text: 'Max paste length is 1000 characters\nGot {} characters'.format(len(Clipboard.paste()))
 		text_size: self.size
 		halign: 'center'
 		valign: 'center'

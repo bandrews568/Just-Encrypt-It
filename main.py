@@ -15,9 +15,10 @@ from kivy.core.window import Window
 from kivy.uix.spinner import Spinner 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.core.clipboard import Clipboard
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.tabbedpanel import TabbedPanel
-
+ 
 if platform == 'android':
 	from jnius import cast
 	from jnius import autoclass	
@@ -41,6 +42,7 @@ class EncryptText(BoxLayout):
 			if len(pass_key) > 16:
 				Window.release_all_keyboards()
 				MaxPassPopup().open()
+				return
 			elif len(pass_key) < 16:
 				#Add filler bits to password 
 				pass_key = pass_key + ("x" * (16 - len(pass_key)))
@@ -52,11 +54,13 @@ class EncryptText(BoxLayout):
 			encoded = EncodeAES(cipher, encode(string, 'utf-8'))
 			return encoded
 
-		elif key == '128 Bit' and not pass_key:
+		elif key == '128 Bit' and pass_key == "":
+			Window.release_all_keyboards()
 			NoPassPopup().open()
+			return
 
 		else:
-			return '(Select Encryption Type)'
+			return "(Select Encryption Type)"
 		
 	def decryptstring(self, string, key, pass_key=None):
 		
@@ -70,6 +74,7 @@ class EncryptText(BoxLayout):
 			if len(pass_key) > 16:
 				Window.release_all_keyboards()
 				MaxPassPopup().open()
+				return
 			elif len(pass_key) < 16:
 				#Add filler bits to password
 				pass_key = pass_key + ("x" * (16 - len(pass_key)))
@@ -79,12 +84,21 @@ class EncryptText(BoxLayout):
 			decoded = DecodeAES(cipher, string)
 			return decoded
 
-		elif key == '128 Bit' and not pass_key:
-			#Remind user to enter a password
+		elif key == '128 Bit' and pass_key == "":
+			Window.release_all_keyboards()
 			NoPassPopup().open()
+			return
 
 		else:
 			return '(Select Encryption Type)'
+
+	def paste_text(self):
+		self.pasted_str = Clipboard.paste()
+		if len(self.pasted_str) >= 1000:
+			MaxClipboardPopup().open()
+			return "" #Can't return None because text input doesn't like it
+		else:
+			return self.pasted_str
 
 	def share(self, data=None):
 		if platform == 'android':
@@ -106,6 +120,9 @@ class NoPassPopup(Popup):
 	pass
 
 class MaxPassPopup(Popup):
+	pass
+
+class MaxClipboardPopup(Popup):
 	pass
 
 class EncryptApp(App):
