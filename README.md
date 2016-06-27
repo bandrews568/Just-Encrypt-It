@@ -1,2 +1,2 @@
 # Just-Encrypt-It
-Android app written in Python using Kivy that encrypts text
+Android application coded in Python using the [Kivy](https://www.kivy.org) UI framework. The application allows users to easily encrypt text with 128 bit encryption, users can then share the encrypted text between other native Android applications. Application is available for download on the [Google Play Store](https://play.google.com/store/apps/details?id=www.brandonandrews.us.brandonandrews.us&hl=en)
