@@ -29,7 +29,7 @@ class EncryptRoot(BoxLayout):
 class EncryptText(BoxLayout):
 
 	Window.softinput_mode = "below_target"
-
+	
 	def encryptstring(self, string, key, pass_key=None):
 		
 		if key == 'ROT 13':
@@ -42,7 +42,7 @@ class EncryptText(BoxLayout):
 			if len(pass_key) > 16:
 				Window.release_all_keyboards()
 				MaxPassPopup().open()
-				return
+				return ""
 			elif len(pass_key) < 16:
 				#Add filler bits to password 
 				pass_key = pass_key + ("x" * (16 - len(pass_key)))
@@ -57,7 +57,7 @@ class EncryptText(BoxLayout):
 		elif key == '128 Bit' and pass_key == "":
 			Window.release_all_keyboards()
 			NoPassPopup().open()
-			return
+			return ""
 
 		else:
 			return "(Select Encryption Type)"
@@ -74,20 +74,28 @@ class EncryptText(BoxLayout):
 			if len(pass_key) > 16:
 				Window.release_all_keyboards()
 				MaxPassPopup().open()
-				return
+				return ""
 			elif len(pass_key) < 16:
 				#Add filler bits to password
 				pass_key = pass_key + ("x" * (16 - len(pass_key)))
-			padding = '{'
-			DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(padding)
-			cipher = AES.new(pass_key)
-			decoded = DecodeAES(cipher, string)
-			return decoded
+			try:
+				padding = '{'
+				DecodeAES = lambda c, e: \
+						    c.decrypt(base64.b64decode(e)).rstrip(padding)
+				cipher = AES.new(pass_key)
+				decoded = DecodeAES(cipher, string)
+				return encode(decoded, 'utf-8', 'replace')
+				
+			except UnicodeDecodeError:
+				"""Fixes invalid continuation byte and invalid start byte error 
+				   thrown by user entering wrong password when decrypting text.
+				"""
+				return ""
 
 		elif key == '128 Bit' and pass_key == "":
 			Window.release_all_keyboards()
 			NoPassPopup().open()
-			return
+			return ""
 
 		else:
 			return '(Select Encryption Type)'
@@ -96,7 +104,7 @@ class EncryptText(BoxLayout):
 		self.pasted_str = Clipboard.paste()
 		if len(self.pasted_str) >= 1000:
 			MaxClipboardPopup().open()
-			return "" #Can't return None because text input doesn't like it
+			return ""
 		else:
 			return self.pasted_str
 
